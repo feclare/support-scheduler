@@ -131,13 +131,14 @@ public class Scheduler extends BaseService
 		}
 	}
 
-	public void createScheduleContext(Schedule schedule)
+	public boolean createScheduleContext(Schedule schedule)
 	{
 		synchronized (scheduleContextQueue)
 		{
 			if(scheduleIdToScheduleContextMap.containsKey(schedule.getId())) {
 				// not intended to be an error
 				logger.info("schedule context " + schedule.getId() + " '" + schedule.getName() + "' already exists.");
+                return false;
 			} else {
 				// build a new schedule context
 				ScheduleContext scheduleContext = new ScheduleContext(schedule);
@@ -149,17 +150,19 @@ public class Scheduler extends BaseService
 				scheduleContextQueue.add(scheduleContext);
 				logger.info("created schedule context " + scheduleContext.getInfo()
 						+ " initial start time " + scheduleContext.getNextTime().toString());
+                return true;
 			}
 		}
 	}
 
-	public void updateScheduleContext(Schedule schedule)
+	public boolean updateScheduleContext(Schedule schedule)
 	{
 		synchronized (scheduleContextQueue)
 		{
 			if(!scheduleIdToScheduleContextMap.containsKey(schedule.getId())) {
 				// not intended to be an error
 				logger.error("failed to find schedule for " + schedule.getId() + " " + schedule.getName());
+                return false;
 			} else {
 				// remove the schedule context from the queue
 				scheduleContextQueue.remove(scheduleIdToScheduleContextMap.get(schedule.getId()));
@@ -172,16 +175,18 @@ public class Scheduler extends BaseService
 				scheduleContextQueue.add(scheduleContext);
 				logger.info("updated schedule " + scheduleContext.getInfo()
 						+ " initial start time " + scheduleContext.getNextTime().toString());
+                return true;
 			}
 		}
 	}
 
-	public void removeScheduleById(String id)
+	public boolean removeScheduleById(String id)
 	{
 		synchronized (scheduleContextQueue)
 		{
 			if(!scheduleIdToScheduleContextMap.containsKey(id)) {
 				logger.error("schedule " + id + " not found.");
+                return false;
 			} else {
 				// look up the schedule context
 				ScheduleContext sc = scheduleIdToScheduleContextMap.get(id);
@@ -198,6 +203,7 @@ public class Scheduler extends BaseService
 				scheduleIdToScheduleContextMap.remove(id);
 				
 				logger.info("removed schedule " + id );
+                return true;
 			}
 		}
 	}

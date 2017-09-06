@@ -19,6 +19,7 @@
  *******************************************************************************/
 package org.edgexfoundry.scheduling;
 
+import static org.junit.Assert.*;
 
 // import static org.junit.Assert.assertNotNull;
 
@@ -68,11 +69,45 @@ public class SchedulerTest {
 	
 	@Test
 	public void testInsert() throws InterruptedException {
-        Schedule s= ScheduleData.newTestInstance();
+        Schedule s = ScheduleData.newTestInstance();
         // assertNotNull(scheduleClient.add(s));
         scheduler.createScheduleContext(s);
-		Thread.sleep(3000);
 		// TODO: need the schedule context to check results :(
 		// assertTrue("schedule should execute only once ", sc sc.() == true);
 	}
+
+    @Test
+	public void testRemoveById() throws InterruptedException {
+        Schedule s = ScheduleData.newTestInstance();
+        scheduler.createScheduleContext(s);
+        assertTrue("Could not remove Schedule", scheduler.removeScheduleById(s.getId()));
+    }
+
+    @Test
+	public void testRemoveByIdTwice() throws InterruptedException {
+        Schedule s = ScheduleData.newTestInstance();
+        scheduler.createScheduleContext(s);
+        assertTrue("Could not remove Schedule", scheduler.removeScheduleById(s.getId()));
+        assertFalse("Could remove twice the same schedule", scheduler.removeScheduleById(s.getId()));
+    }
+
+    @Test
+	public void testRemoveByIdTwice2() throws InterruptedException {
+        Schedule s = ScheduleData.newTestInstance();
+        scheduler.createScheduleContext(s);
+        scheduler.createScheduleContext(s);
+        assertTrue("Could not remove Schedule", scheduler.removeScheduleById(s.getId()));
+        assertFalse("Could remove twice the same schedule", scheduler.removeScheduleById(s.getId()));
+    }
+
+    @Test
+	public void testUpdateScheduleContext() throws InterruptedException {
+        Schedule s = ScheduleData.newTestInstance();
+        Schedule s2 = ScheduleData.newTestInstance();
+        s2.setId("anotherId");
+        scheduler.createScheduleContext(s);
+        s.setRunOnce(!s.getRunOnce());
+        assertTrue("Could not update Schedule", scheduler.removeScheduleById(s.getId()));
+        assertFalse("Should not be able to update not added schedule", scheduler.removeScheduleById(s.getId()));
+    }
 }
