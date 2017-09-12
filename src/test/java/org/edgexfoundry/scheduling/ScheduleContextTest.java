@@ -21,7 +21,7 @@
 package org.edgexfoundry.scheduling;
 
 import static org.edgexfoundry.test.data.ScheduleData.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -42,7 +42,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(RequiresNone.class)
 public class ScheduleContextTest {
-    
+
   private boolean print = false;
 
   @Before
@@ -200,8 +200,8 @@ public class ScheduleContextTest {
       System.out.println("schedule context " + sc);
     }
     assertTrue("next time does not match",
-               sc.getNextTime().compareTo(zdt1) > 0 &&
-               sc.getNextTime().compareTo(zdt2) <= 0 && !sc.isComplete());
+               sc.getNextTime().compareTo(zdt1) > 0
+               && sc.getNextTime().compareTo(zdt2) <= 0 && !sc.isComplete());
   }
 
   // IS COMPLETE

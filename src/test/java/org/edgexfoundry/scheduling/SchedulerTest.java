@@ -17,9 +17,11 @@
  * @author: Marc Hammons, Dell
  * @version: 1.0.0
  *******************************************************************************/
+
 package org.edgexfoundry.scheduling;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 // import static org.junit.Assert.assertNotNull;
 
@@ -47,67 +49,71 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringApplicationConfiguration(classes = Application.class)
 @Category({ RequiresMongoDB.class, RequiresSpring.class, RequiresMetaDataRunning.class })
 public class SchedulerTest {
-	
-	@Autowired
-	private ScheduleClient scheduleClient;
-	
-	@Autowired
-	private Scheduler scheduler;
 
-	@Before
-	public void setup() {
-		System.out.println("Note - Mongo DB and IoT Core Meta Data service must be on for this test to run successfully.");
-	}
+  @Autowired
+  private ScheduleClient scheduleClient;
 
-	@After
-	public void cleanup() {
-		List<Schedule> sl = scheduleClient.schedules();
-		for(Schedule s:sl) {
-			scheduleClient.delete(s.getId());
-		}
-	}
-	
-	@Test
-	public void testInsert() throws InterruptedException {
-        Schedule s = ScheduleData.newTestInstance();
-        // assertNotNull(scheduleClient.add(s));
-        scheduler.createScheduleContext(s);
-		// TODO: need the schedule context to check results :(
-		// assertTrue("schedule should execute only once ", sc sc.() == true);
-	}
+  @Autowired
+  private Scheduler scheduler;
 
-    @Test
-	public void testRemoveById() throws InterruptedException {
-        Schedule s = ScheduleData.newTestInstance();
-        scheduler.createScheduleContext(s);
-        assertTrue("Could not remove Schedule", scheduler.removeScheduleById(s.getId()));
+  @Before
+  public void setup() {
+    System.out.println("Note - Mongo DB and IoT Core Meta Data service must be on for "
+                       + "this test to run successfully.");
+  }
+
+  @After
+  public void cleanup() {
+    List<Schedule> sl = scheduleClient.schedules();
+    for (Schedule s:sl) {
+      scheduleClient.delete(s.getId());
     }
+  }
 
-    @Test
-	public void testRemoveByIdTwice() throws InterruptedException {
-        Schedule s = ScheduleData.newTestInstance();
-        scheduler.createScheduleContext(s);
-        assertTrue("Could not remove Schedule", scheduler.removeScheduleById(s.getId()));
-        assertFalse("Could remove twice the same schedule", scheduler.removeScheduleById(s.getId()));
-    }
+  @Test
+  public void testInsert() throws InterruptedException {
+    Schedule schedule = ScheduleData.newTestInstance();
+    // assertNotNull(scheduleClient.add(s));
+    scheduler.createScheduleContext(schedule);
+    // TODO: need the schedule context to check results :(
+    // assertTrue("schedule should execute only once ", sc sc.() == true);
+  }
 
-    @Test
-	public void testRemoveByIdTwice2() throws InterruptedException {
-        Schedule s = ScheduleData.newTestInstance();
-        scheduler.createScheduleContext(s);
-        scheduler.createScheduleContext(s);
-        assertTrue("Could not remove Schedule", scheduler.removeScheduleById(s.getId()));
-        assertFalse("Could remove twice the same schedule", scheduler.removeScheduleById(s.getId()));
-    }
+  @Test
+  public void testRemoveById() throws InterruptedException {
+    Schedule schedule = ScheduleData.newTestInstance();
+    scheduler.createScheduleContext(schedule);
+    assertTrue("Could not remove Schedule", scheduler.removeScheduleById(schedule.getId()));
+  }
 
-    @Test
-	public void testUpdateScheduleContext() throws InterruptedException {
-        Schedule s = ScheduleData.newTestInstance();
-        Schedule s2 = ScheduleData.newTestInstance();
-        s2.setId("anotherId");
-        scheduler.createScheduleContext(s);
-        s.setRunOnce(!s.getRunOnce());
-        assertTrue("Could not update Schedule", scheduler.removeScheduleById(s.getId()));
-        assertFalse("Should not be able to update not added schedule", scheduler.removeScheduleById(s.getId()));
-    }
+  @Test
+  public void testRemoveByIdTwice() throws InterruptedException {
+    Schedule schedule = ScheduleData.newTestInstance();
+    scheduler.createScheduleContext(schedule);
+    assertTrue("Could not remove Schedule", scheduler.removeScheduleById(schedule.getId()));
+    assertFalse("Could remove twice the same schedule",
+                scheduler.removeScheduleById(schedule.getId()));
+  }
+
+  @Test
+  public void testRemoveByIdTwice2() throws InterruptedException {
+    Schedule schedule = ScheduleData.newTestInstance();
+    scheduler.createScheduleContext(schedule);
+    scheduler.createScheduleContext(schedule);
+    assertTrue("Could not remove Schedule", scheduler.removeScheduleById(schedule.getId()));
+    assertFalse("Could remove twice the same schedule",
+                scheduler.removeScheduleById(schedule.getId()));
+  }
+
+  @Test
+  public void testUpdateScheduleContext() throws InterruptedException {
+    Schedule schedule = ScheduleData.newTestInstance();
+    Schedule s2 = ScheduleData.newTestInstance();
+    s2.setId("anotherId");
+    scheduler.createScheduleContext(schedule);
+    schedule.setRunOnce(!schedule.getRunOnce());
+    assertTrue("Could not update Schedule", scheduler.removeScheduleById(schedule.getId()));
+    assertFalse("Should not be able to update not added schedule",
+                scheduler.removeScheduleById(schedule.getId()));
+  }
 }
